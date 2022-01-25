@@ -65,7 +65,7 @@ public slots:
 	void openURL(const QString &url);
 	void setState(int state, const QString &context);
 	void setTitle(const QString &title, const QString &context, ESDSDKTarget target = 0);
-	void setImage(const QString &base64Str, const QString &context, ESDSDKTarget target = 0);
+	void setImage(const QString &base64Str, const QString &context, int state = -1, ESDSDKTarget target = kESDSDKTarget_HardwareAndSoftware);
 	void showAlert(const QString &context);
 	void showOk(const QString &context);
 	void sendToPropertyInspector(const QString &action, const QString &context, QJsonObject &payload);

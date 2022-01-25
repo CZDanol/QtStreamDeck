@@ -241,7 +241,7 @@ void QStreamDeckPlugin::setTitle(const QString &title, const QString &context, E
 	writeJSON(jsonObject);
 }
 
-void QStreamDeckPlugin::setImage(const QString &base64Str, const QString &context, ESDSDKTarget target) {
+void QStreamDeckPlugin::setImage(const QString &base64Str, const QString &context, int state, ESDSDKTarget target) {
 	QJsonObject jsonObject;
 	const QString prefix = "data:image/png;base64,";
 
@@ -250,15 +250,13 @@ void QStreamDeckPlugin::setImage(const QString &base64Str, const QString &contex
 
 	QJsonObject payload;
 	payload[kESDSDKPayloadTarget] = target;
+	payload[kESDSDKPayloadImage] = base64Str.contains(prefix) ? base64Str : prefix + base64Str;
 
-	if(base64Str.contains(prefix)) {
-		payload[kESDSDKPayloadImage] = base64Str;
-	}
-	else {
-		payload[kESDSDKPayloadImage] = prefix + base64Str;
-	}
+	if(state >= 0)
+		payload["state"] = state;
 
 	jsonObject[kESDSDKCommonPayload] = payload;
+
 	writeJSON(jsonObject);
 }
 
