@@ -35,11 +35,18 @@ public:
 
 	bool isDeviceConnected();
 
+public:
+	inline const QString &pluginUUID() const {
+		return m_plugin.pluginUUID;
+	}
+
 private:
 	void writeJSON(QJsonObject &jsonObject);
 	bool parseMessage(QJsonObject &jsonObject);
 
 signals:
+	void pluginConnected();
+
 	void deviceDidConnect(const QString &deviceId, QJsonObject &deviceInfo);
 	void deviceDidDisconnect(const QString &deviceId);
 
@@ -54,12 +61,12 @@ signals:
 	void propertyInspectorDidDisappear(const QStreamDeckAction &action);
 	void sendToPlugin(const QStreamDeckAction &action);
 	void didReceiveSettings(const QStreamDeckAction &action);
-	void didReceiveGlobalSettings(const QStreamDeckAction &action);
+	void didReceiveGlobalSettings(const QJsonObject &settings);
 	void systemDidWakeUp();
 
 public slots:
-	void setSettings(QJsonObject &settings, const QString &context);
-	void setGlobalSettings(QJsonObject &settings, const QString &context);
+	void setSettings(const QJsonObject &settings, const QString &context);
+	void setGlobalSettings(const QJsonObject &settings, const QString &context);
 	void getSettings(const QString &context);
 	void getGlobalSettings(const QString &context);
 	void openURL(const QString &url);

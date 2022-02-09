@@ -73,6 +73,8 @@ void QStreamDeckPlugin::streamdeck_onConnected() {
 	QJsonObject pluginRegisterData;
 	m_plugin.toJson(pluginRegisterData);
 	writeJSON(pluginRegisterData);
+
+	emit pluginConnected();
 }
 
 void QStreamDeckPlugin::streamdeck_onDisconnected() {
@@ -90,9 +92,9 @@ void QStreamDeckPlugin::streamdeck_onDataReceived(QString message) {
 #endif
 
 	QJsonDocument jsonMessage = QJsonDocument::fromJson(message.toUtf8());
-	QJsonObject jsonMessagObject = jsonMessage.object();
+	QJsonObject jsonMessageObject = jsonMessage.object();
 
-	bool messageOk = parseMessage(jsonMessagObject);
+	bool messageOk = parseMessage(jsonMessageObject);
 
 #ifdef DEBUG
 	if(!messageOk)
@@ -135,7 +137,6 @@ bool QStreamDeckPlugin::parseMessage(QJsonObject &jsonObject) {
 			{kESDSDKEventPropertyInspectorDidDisappear, &QStreamDeckPlugin::propertyInspectorDidDisappear},
 			{kESDSDKEventSendToPlugin,                  &QStreamDeckPlugin::sendToPlugin},
 			{kESDSDKEventDidReceiveSettings,            &QStreamDeckPlugin::didReceiveSettings},
-			{kESDSDKEventDidReceiveGlobalSettings,      &QStreamDeckPlugin::didReceiveGlobalSettings},
 		};
 
 		if(auto func = actionFuncs.value(action.event)) {
@@ -164,6 +165,12 @@ bool QStreamDeckPlugin::parseMessage(QJsonObject &jsonObject) {
 		// SystemDidWakeUp
 		if(eventMsg.event == kESDSDKEventSystemDidWakeUp) {
 			emit systemDidWakeUp();
+			return true;
+		}
+
+		if(eventMsg.event == kESDSDKEventDidReceiveGlobalSettings) {
+			this->m_deviceConnected = false;
+			emit didReceiveGlobalSettings(eventMsg.payload["settings"].toObject());
 			return true;
 		}
 	}
@@ -278,7 +285,7 @@ void QStreamDeckPlugin::showOk(const QString &context) {
 	writeJSON(jsonObject);
 }
 
-void QStreamDeckPlugin::setSettings(QJsonObject &settings, const QString &context) {
+void QStreamDeckPlugin::setSettings(const QJsonObject &settings, const QString &context) {
 	QJsonObject jsonObject;
 
 	jsonObject[kESDSDKCommonEvent] = kESDSDKEventSetSettings;
@@ -288,7 +295,7 @@ void QStreamDeckPlugin::setSettings(QJsonObject &settings, const QString &contex
 	writeJSON(jsonObject);
 }
 
-void QStreamDeckPlugin::setGlobalSettings(QJsonObject &settings, const QString &context) {
+void QStreamDeckPlugin::setGlobalSettings(const QJsonObject &settings, const QString &context) {
 	QJsonObject jsonObject;
 
 	jsonObject[kESDSDKCommonEvent] = kESDSDKEventSetGlobalSettings;
