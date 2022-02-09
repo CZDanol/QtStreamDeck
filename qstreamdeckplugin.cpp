@@ -306,7 +306,7 @@ void QStreamDeckPlugin::getSettings(const QString &context) {
 	writeJSON(jsonObject);
 }
 
-void QStreamDeckPlugin::getGlobalSettings(QString &context) {
+void QStreamDeckPlugin::getGlobalSettings(const QString &context) {
 	QJsonObject jsonObject;
 	jsonObject[kESDSDKCommonEvent] = kESDSDKEventGetGlobalSettings;
 	jsonObject[kESDSDKCommonContext] = context;
