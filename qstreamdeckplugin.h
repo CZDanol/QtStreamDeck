@@ -61,7 +61,7 @@ public slots:
 	void setSettings(QJsonObject &settings, const QString &context);
 	void setGlobalSettings(QJsonObject &settings, const QString &context);
 	void getSettings(const QString &context);
-	void getGlobalSettings(QJsonObject &context);
+	void getGlobalSettings(QString &context);
 	void openURL(const QString &url);
 	void setState(int state, const QString &context);
 	void setTitle(const QString &title, const QString &context, ESDSDKTarget target = 0);
